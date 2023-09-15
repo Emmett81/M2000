@@ -2,12 +2,10 @@
 /***                                                                      ***/
 /***                                M2000.c                               ***/
 /***                                                                      ***/
-/*** This file contains the startup code. It's compatible with both UNIX  ***/
-/*** and MSDOS implementations                                            ***/
+/*** This file contains the startup code.                                 ***/
 /***                                                                      ***/
 /*** Copyright (C) Marcel de Kogel 1996,1997                              ***/
 /***     You are not allowed to distribute this software commercially     ***/
-/***     Please, notify me, if you make any changes to this file          ***/
 /****************************************************************************/
 
 #include <stdio.h>
@@ -57,10 +55,6 @@ extern int SaveCPU;
 extern int videomode;
 
 static int  CpuSpeed;
-#ifdef ALLEGRO
-#include <allegro5/allegro.h>
-#endif
-// Odd Allegro implementations have (had?) _argc _argv already declared (!?!??)
 static int  _argc;
 static char *_argv[256];
 static unsigned char MainConfigFile[MAX_CONFIG_FILE_SIZE];
@@ -71,21 +65,12 @@ static char CartNameNoExt[MAX_FILE_NAME];
 static char _ROMName[MAX_FILE_NAME];
 static char ProgramPath[MAX_FILE_NAME];
 
-#ifndef MSDOS
-/* Get full path name, convert all backslashes to UNIX style slashes */
-static void _fixpath (char *old,char *new)
-{
- strcpy (new,old);
-}
-#endif
 
-#ifdef _WIN32
 /* Get full path name, convert all backslashes to UNIX style slashes */
 static void _fixpath (char *old,char *new)
 {
  strcpy (new,old);
 }
-#endif
 
 /* Parse the command line options */
 static int ParseOptions (int argc,char *argv[])
@@ -351,10 +336,9 @@ static void FixFileNames (void)
   strcat (_CartName,CartName);
  }
  else
+
   _fixpath (CartName,_CartName);
-#ifdef MSDOS
- strlwr (_CartName);
-#endif
+
  CartName=_CartName;
  strcpy (CartNameNoExt,CartName);
  p=CartNameNoExt;
@@ -404,9 +388,7 @@ static void FixRomPath (void)
  }
  if (!q)                       /* Default extension='.bin' */
   strcat (_ROMName,_DefExt);
-#ifdef MSDOS
- strlwr (_ROMName);
-#endif
+
  ROMName=_ROMName;
 }
 
@@ -432,15 +414,11 @@ int main(int argc,char *argv[])
  UPeriod=1;
  CpuSpeed=100;
  IFreq=50;
-#ifdef MSDOS
- PrnName="PRN";
-#endif
+
  /* Load m2000.cfg */
  memset (MainConfigFile,0,sizeof(MainConfigFile));
  memset (SubConfigFile,0,sizeof(SubConfigFile));
-#ifdef MSDOS
- strlwr (argv[0]);
-#endif
+
  GetPath (argv[0],ProgramPath);
  _argc=1;
  _argv[0]=argv[0];
@@ -472,14 +450,13 @@ int main(int argc,char *argv[])
  if (CpuSpeed>1000) CpuSpeed=1000;
  Z80_IPeriod=(2500000*CpuSpeed)/(100*IFreq);
  /* Start emulated P2000 */
-#ifndef MSDOS
+
  if (!InitMachine()) return 0;
-#endif
  StartP2000();
  /* Trash emulated P2000 */
  TrashP2000();
-#ifndef MSDOS
+
  TrashMachine ();
-#endif
+
  return 0;
 }

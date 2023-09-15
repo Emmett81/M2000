@@ -1,5 +1,10 @@
 
-# **M2000** #
+# **M2000-NG** #
+
+What is M2000-NG?
+================
+
+M2000-NG is (an attempt to eventually be) a trimming down and (like the ship of theseus a) reimplementation of the ~30 year M2000 emulator using OpenGL SE and OpenAL under an MIT license by me (Emmett81, Gert).
 
 What is M2000?
 =============
