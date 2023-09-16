@@ -1,0 +1,36 @@
+#### Makefile for M2000 Unix/OpenGL
+# Following #defines can be used:
+# OPENGL		Compile Unix/X version
+# DEBUG			Compile with builtin debugger
+# LSB_FIRST		Compile for a low-endian machine
+# __64BIT__		Compile for 64 bit machines
+# HAVE_FTRUNCATE	We have ftruncate()
+# HAVE_CLOCK		clock() is available on this machine
+#
+# If you're having trouble compiling M2000, check if the X11
+# directories are correct, and modify CFLAGS and LFLAGS if not.
+# Undefining MITSHM may also fix problems for several users. Be
+# aware though, screen refresh is much slower when shared
+# memory is not used
+
+CC	= gcc	# C compiler used
+LD	= gcc	# Linker used
+
+CFLAGS  = -Wall -fomit-frame-pointer -O2 -I/usr/X11/include \
+	  -DLSB_FIRST -DHAVE_FTRUNCATE -DHAVE_CLOCK -DOPENGL \
+	  -D__64BIT__
+
+LFLAGS	= -s -L/usr/X11/lib
+
+OBJECTS = M2000.o P2000.o Z80.o Unix.o OpenGL.c
+
+all:    m2000
+
+m2000:	$(OBJECTS)
+	$(LD) $(LFLAGS) -o m2000 $(OBJECTS) -lXext -lX11
+
+M2000.o:    M2000.c P2000.h Z80.h Help.h Z80IO.h
+P2000.o:    P2000.c P2000.h Z80.h Z80IO.h
+Z80.o:      Z80.c Z80.h Z80DAA.h Z80CDx86.h Z80IO.h
+X.o:        OpenGL.c Common.h P2000.h Z80.h Z80IO.h Unix.h
+Unix.o:     Unix.c P2000.h Z80.h Z80IO.h Unix.h

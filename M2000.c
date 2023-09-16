@@ -21,9 +21,7 @@ extern char *Title;
 
 /* Maximum configuration file size in bytes */
 #define MAX_CONFIG_FILE_SIZE    1024
-/* Maximum configuration filename length
-   MAXPATH can't be used with MSDOS/DJGPP apps
-   running in a Win95 DOS box */
+
 #define MAX_FILE_NAME           256
 
 /* Default extension for cartridge images */

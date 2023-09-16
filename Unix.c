@@ -2,8 +2,7 @@
 /***                                                                      ***/
 /***                                 Unix.c                               ***/
 /***                                                                      ***/
-/*** This file contains various Unix routines used by both the X-Windows  ***/
-/*** and the Linux/SVGALib implementations                                ***/
+/*** This file contains various Unix routines                             ***/
 /***                                                                      ***/
 /*** Copyright (C) Marcel de Kogel 1996,1997                              ***/
 /***     You are not allowed to distribute this software commercially     ***/
@@ -16,12 +15,10 @@
 #include <time.h>
 
 #ifdef SOUND
-#ifndef ALLEGRO
+#ifndef OPENGL
 #include <stdlib.h>
 #include <unistd.h>
-#ifndef WIN32 
 #include <sys/ioctl.h>
-#endif
 #include <fcntl.h>
 #include <sys/soundcard.h>
 #include <string.h>
@@ -191,7 +188,7 @@ int Sound_FlushSound (void)
 #endif
 #endif
 
-#ifndef ALLEGRO
+#ifndef OPENGL
 #ifdef JOYSTICK
 #include <linux/joystick.h>
 #include <unistd.h>

@@ -6,14 +6,6 @@
                                      
 Hardware Requirements
 =====================
-MS-DOS version:
- A 386DX-40 (486DX-33 recommended)
- A VGA compatible video card
- PC Speaker, SoundBlaster and joystick supported
-Linux/SVGALib version:
- A 486DX-33 (486DX-66 recommended)
- A VGA compatible video card
- Sound and joystick drivers supported
 Unix/X version:
  A 486DX-66 or DEC Alpha-150
  An X-Windows server running in 8, 16 or 32 bpp mode
