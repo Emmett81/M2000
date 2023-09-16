@@ -11,19 +11,19 @@
 /****************************************************************************/
 
 #ifdef SOUND
-void InitSound (int mode);
-void TrashSound (void);
-void IncreaseSoundVolume (void);
-void DecreaseSoundVolume (void);
-void WriteSound (int toggle);
-int Sound_FlushSound (void);
+void InitSound(int mode);
+void TrashSound(void);
+void IncreaseSoundVolume(void);
+void DecreaseSoundVolume(void);
+void WriteSound(int toggle);
+int Sound_FlushSound(void);
 extern int mastervolume;
 #endif
 
 #ifdef JOYSTICK
-void InitJoystick (int mode);
-void TrashJoystick (void);
-int ReadJoystick (void);
+void InitJoystick(int mode);
+void TrashJoystick(void);
+int ReadJoystick(void);
 #endif
 
-int ReadTimer (void);
+int ReadTimer(void);

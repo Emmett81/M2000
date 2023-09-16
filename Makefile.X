@@ -36,6 +36,6 @@ m2000:	$(OBJECTS)
 
 M2000.o:    M2000.c P2000.h Z80.h Help.h Z80IO.h
 P2000.o:    P2000.c P2000.h Z80.h Z80IO.h
-Z80.o:      Z80.c Z80.h Z80DAA.h Z80CDx86.h Z80IO.h
+Z80.o:      Z80.c Z80.h Z80DAA.h Z80IO.h
 X.o:        X.c Common.h P2000.h Z80.h Z80IO.h Unix.h
 Unix.o:     Unix.c P2000.h Z80.h Z80IO.h Unix.h

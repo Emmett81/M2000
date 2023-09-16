@@ -21,28 +21,28 @@
 #undef MITSHM
 #endif
 
-#include "Z80.h"            /* Z80 emulation declarations    */
+#include "Z80.h" /* Z80 emulation declarations    */
 
 /******** Variables used to control emulator behavior ***********************/
-extern byte Verbose;            /* Debug messages ON/OFF                    */
-extern byte *VRAM,*RAM,*ROM;    /* Main and Video RAMs                      */
-extern int RAMSize;             /* Amount of RAM installed                  */
-extern char *FontName;          /* Font file                                */
-extern char *CartName;          /* Cartridge ROM file                       */
-extern char *ROMName;           /* Main ROM file                            */
-extern char *TapeName;          /* Tape image                               */
-extern char *PrnName;           /* Printer log file                         */
-extern int PrnType;             /* Printer type                             */
-extern byte DISAReg;            /* Reg #0x70                                */
-extern byte SoundReg;           /* Reg #0x50                                */
-extern byte ScrollReg;          /* Reg #0x30                                */
-extern byte OutputReg;          /* Reg #0x20                                */
-extern byte KeyMap[10];         /* Keyboard map                             */
-extern int TapeBootEnabled;     /* 1 if booting enabled                     */
-extern int TapeProtect;         /* 1 if tape is write-protected             */
-extern int UPeriod;             /* Number of interrupts/screen update       */
-extern int IFreq;               /* Number of interrupts/second              */
-extern int Sync;                /* 1 if emulation should be synced          */
+extern byte Verbose;           /* Debug messages ON/OFF                    */
+extern byte *VRAM, *RAM, *ROM; /* Main and Video RAMs                      */
+extern int RAMSize;            /* Amount of RAM installed                  */
+extern char *FontName;         /* Font file                                */
+extern char *CartName;         /* Cartridge ROM file                       */
+extern char *ROMName;          /* Main ROM file                            */
+extern char *TapeName;         /* Tape image                               */
+extern char *PrnName;          /* Printer log file                         */
+extern int PrnType;            /* Printer type                             */
+extern byte DISAReg;           /* Reg #0x70                                */
+extern byte SoundReg;          /* Reg #0x50                                */
+extern byte ScrollReg;         /* Reg #0x30                                */
+extern byte OutputReg;         /* Reg #0x20                                */
+extern byte KeyMap[10];        /* Keyboard map                             */
+extern int TapeBootEnabled;    /* 1 if booting enabled                     */
+extern int TapeProtect;        /* 1 if tape is write-protected             */
+extern int UPeriod;            /* Number of interrupts/screen update       */
+extern int IFreq;              /* Number of interrupts/second              */
+extern int Sync;               /* 1 if emulation should be synced          */
 /****************************************************************************/
 
 /****************************************************************************/
@@ -74,7 +74,7 @@ void TrashMachine(void);
 /****************************************************************************/
 /*** This function is called to poll keyboard                             ***/
 /************************************************** TO BE WRITTEN BY USER ***/
-void Keyboard (void);
+void Keyboard(void);
 
 /****************************************************************************/
 /*** This function is called on writes to the sound register              ***/
@@ -90,15 +90,14 @@ void FlushSound(void);
 /****************************************************************************/
 /*** Refresh the screen                                                   ***/
 /************************************************** TO BE WRITTEN BY USER ***/
-void RefreshScreen (void);
+void RefreshScreen(void);
 
 /****************************************************************************/
 /*** Pause a while                                                        ***/
 /************************************************** TO BE WRITTEN BY USER ***/
-void Pause (int ms);
+void Pause(int ms);
 
 /****************************************************************************/
 /*** Load the specified font                                              ***/
 /************************************************** TO BE WRITTEN BY USER ***/
-int LoadFont (char *filename);
-
+int LoadFont(char *filename);
