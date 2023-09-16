@@ -29,7 +29,7 @@ extern char *Title;
 
 static char *Options[]=
 { 
-  "verbose","help","cpuspeed","ifreq","t","m",
+  "verbose","help","cpuspeed","ifreq",
   "sound","joystick","romfile","uperiod","trap","printertype",
   "printer","font","tape","boot","volume","ram","sync","shm",
   "savecpu","video","cart",
@@ -127,11 +127,7 @@ static int ParseOptions (int argc,char *argv[])
              else
               misparm=1;
              break;
-    case 4:  P2000_Mode=0;
-             break;
-    case 5:  P2000_Mode=1;
-             break;
-    case 6:  N++;
+    case 4:  N++;
              if(N<argc)
 #ifdef SOUND
               soundmode=atoi(argv[N])
@@ -139,7 +135,7 @@ static int ParseOptions (int argc,char *argv[])
              ;else
               misparm=1;
              break;
-    case 16: N++;
+    case 14: N++;
              if(N<argc)
 #ifdef SOUND
               mastervolume=atoi(argv[N])
@@ -147,7 +143,7 @@ static int ParseOptions (int argc,char *argv[])
              ;else
               misparm=1;
              break;
-    case 7:  N++;
+    case 5:  N++;
              if(N<argc)
 #ifdef JOYSTICK
               joymode=atoi(argv[N])
@@ -155,66 +151,66 @@ static int ParseOptions (int argc,char *argv[])
              ;else
               misparm=1;
              break;
-    case 8:  N++;
+    case 6:  N++;
              if(N<argc)
               ROMName=argv[N];
              else
               misparm=1;
              break;
-    case 9:  N++;
+    case 7:  N++;
              if(N<argc)
               UPeriod=atoi(argv[N]);
              else
               misparm=1;
              break;
 #ifdef DEBUG
-    case 10: N++;
+    case 8: N++;
              sscanf(argv[N],"%X",&Z80_Trap);
              break;
 #endif
-    case 11: N++;
+    case 9: N++;
              if(N<argc)
               PrnType=atoi(argv[N]);
              else
               misparm=1;
              break;
-    case 12: N++;
+    case 10: N++;
              if(N<argc)
               PrnName=argv[N];
              else
               misparm=1;
              break;
-    case 13: N++;
+    case 11: N++;
              if(N<argc)
               FontName=argv[N];
              else
               misparm=1;
              break;
-    case 14: N++;
+    case 12: N++;
              if(N<argc)
               TapeName=argv[N];
              else
               misparm=1;
              break;
-    case 15: N++;
+    case 13: N++;
              if(N<argc)
               TapeBootEnabled=atoi(argv[N]);
              else
               misparm=1;
              break;
-    case 17: N++;
+    case 15: N++;
              if(N<argc)
               RAMSize=atoi(argv[N]);
              else
               misparm=1;
              break;
-    case 18: N++;
+    case 16: N++;
              if(N<argc)
               Sync=atoi(argv[N]);
              else
               misparm=1;
              break;
-    case 19: N++;
+    case 17: N++;
              if (N<argc)
 #ifdef MITSHM
               UseSHM=atoi(argv[N])
@@ -222,7 +218,7 @@ static int ParseOptions (int argc,char *argv[])
              ;else
               misparm=1;
              break;
-    case 20: N++;
+    case 18: N++;
              if (N<argc)
 #ifdef UNIX_X
               SaveCPU=atoi(argv[N])
@@ -230,13 +226,13 @@ static int ParseOptions (int argc,char *argv[])
              ;else
               misparm=1;
              break;
-    case 21: N++;
+    case 19: N++;
              if (N<argc)
               videomode=atoi(argv[N]);
              else
               misparm=1;
              break;
-    case 22: N++;
+    case 20: N++;
              if (N<argc)
               CartName=argv[N];
              else
@@ -278,17 +274,15 @@ static int GetCartName (int argc,char *argv[])
    switch(J)
    {
     case 1:  return 0;
-    case 0: case 2: case 3: case 6: case 7: case 8: case 9:
-    case 11: case 12: case 13: case 14: case 15: case 17: case 18:
-    case 16: case 19: case 20: case 21:
+    case 0: case 2: case 3: case 4: case 5: case 6: case 7:
+    case 9: case 10: case 11: case 12: case 13: case 15: case 16:
+    case 14: case 17: case 18: case 19:
 #ifdef DEBUG
-    case 10:
+    case 8:
 #endif
              N++;
              if (N>=argc)
               return 0;
-             break;
-    case 4: case 5:
              break;
     default: return 0;
    }

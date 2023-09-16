@@ -380,8 +380,7 @@ int InitMachine(void)
   }
  }
  if (Verbose) printf ("OK\n  Allocating cache buffer... ");
- if (P2000_Mode) i=80*24;
- else i=40*24;
+ i=40*24;
  OldCharacter=malloc (i*sizeof(int));
  if (!OldCharacter)
  {
@@ -390,20 +389,19 @@ int InitMachine(void)
  }
  memset (OldCharacter,-1,i*sizeof(int));
  if (Verbose) printf ("OK\n  Allocating colours... ");
- if (!P2000_Mode)
- {
-  for (i=0;i<8;++i)
+ 
+ for (i=0;i<8;++i)
   {
-   if (Pal[i*3+0]==0 && Pal[i*3+1]==0 && Pal[i*3+2]==0)
-    XPal[i]=Black;
-   else if (Pal[i*3+0]==255 && Pal[i*3+1]==255 && Pal[i*3+2]==255)
-    XPal[i]=White;
-   else
-   {
-    Colour.flags=DoRed|DoGreen|DoBlue;
-    Colour.red=Pal[i*3+0]<<8;
-    Colour.green=Pal[i*3+1]<<8;
-    Colour.blue=Pal[i*3+2]<<8;
+    if (Pal[i*3+0]==0 && Pal[i*3+1]==0 && Pal[i*3+2]==0)
+      XPal[i]=Black;
+    else if (Pal[i*3+0]==255 && Pal[i*3+1]==255 && Pal[i*3+2]==255)
+      XPal[i]=White;
+    else
+    {
+      Colour.flags=DoRed|DoGreen|DoBlue;
+     Colour.red=Pal[i*3+0]<<8;
+     Colour.green=Pal[i*3+1]<<8;
+     Colour.blue=Pal[i*3+2]<<8;
 
     if (XAllocColor(Dsp,DefaultCMap,&Colour)) {
 #ifdef LSB_FIRST
@@ -416,14 +414,10 @@ int InitMachine(void)
       XPal[i]=SwapBytes (Colour.pixel,bpp);
 	}
 
-   }
   }
- }
- else
- {
-  XPal[0]=Black;
-  XPal[1]=White;
- }
+}
+ 
+ 
  if (Verbose) printf ("OK\n");
 #ifdef JOYSTICK
  InitJoystick (joymode);
@@ -474,12 +468,7 @@ int LoadFont (char *filename)
  }
  if (Verbose) puts ((i)? "OK":"FAILED");
  if (!i) return 0;
- if (P2000_Mode)
- {
-  memcpy (FontBuf,TempBuf,2240);
-  free (TempBuf);
-  return 1;
- }
+ 
  /* Stretch characters to 12x20 */
  for (i=0;i<96*10;i+=10)
  {
@@ -653,121 +642,11 @@ void Pause (int ms)
  while ((j-i)<0) j=ReadTimer();
  OldTimer=j;
 }
-
+      
 /****************************************************************************/
-/*** Put a character in the display buffer for P2000M emulation mode      ***/
+/*** Put a character in the display buffer                                ***/
 /****************************************************************************/
-#define PUTCHAR_M \
- PIXEL *p; \
- p=((PIXEL*)DisplayBuf)+y*width*10+x*6+(width-480)/2+(height-240)*width/2; \
- c*=10; \
- if (eor) \
- { \
-  fg=XPal[0]; \
-  bg=XPal[1]; \
- } \
- else \
- { \
-  fg=XPal[1]; \
-  bg=XPal[0]; \
- } \
- for (i=0;i<10;++i,p+=width,c++) \
- { \
-  K=FontBuf[c]; \
-  if (K&0x20) p[0]=fg; else p[0]=bg; \
-  if (K&0x10) p[1]=fg; else p[1]=bg; \
-  if (K&0x08) p[2]=fg; else p[2]=bg; \
-  if (K&0x04) p[3]=fg; else p[3]=bg; \
-  if (K&0x02) p[4]=fg; else p[4]=bg; \
-  if (K&0x01) p[5]=fg; else p[5]=bg; \
- } \
- if (ul) p[-width]=p[-width+1]=p[-width+2]= \
-         p[-width+3]=p[-width+4]=p[-width+5]=fg;
-         
-#define PUTCHAR_HIRES_M \
- PIXEL *p; \
- p=((PIXEL*)DisplayBuf)+y*width*20+x*6+(width-480)/2+(height-480)*width/2; \
- c*=10; \
- if (eor) \
- { \
-  fg=XPal[0]; \
-  bg=XPal[1]; \
- } \
- else \
- { \
-  fg=XPal[1]; \
-  bg=XPal[0]; \
- } \
- for (i=0;i<10;++i,p+=width*2,c++) \
- { \
-  K=FontBuf[c]; \
-  if (K&0x20) p[0]=p[0+width]=fg; else p[0]=p[0+width]=bg; \
-  if (K&0x10) p[1]=p[1+width]=fg; else p[1]=p[1+width]=bg; \
-  if (K&0x08) p[2]=p[2+width]=fg; else p[2]=p[2+width]=bg; \
-  if (K&0x04) p[3]=p[3+width]=fg; else p[3]=p[3+width]=bg; \
-  if (K&0x02) p[4]=p[4+width]=fg; else p[4]=p[4+width]=bg; \
-  if (K&0x01) p[5]=p[5+width]=fg; else p[5]=p[5+width]=bg; \
- } \
- if (ul) p[-width]=p[-width+1]=p[-width+2]= \
-         p[-width+3]=p[-width+4]=p[-width+5]= \
-         p[-width*2]=p[-width*2+1]=p[-width*2+2]= \
-         p[-width*2+3]=p[-width*2+4]=p[-width*2+5]=fg;
-         
-static inline void PutChar_M (int x,int y,int c,int eor,int ul)
-{
- int K;
- int i,fg,bg;
- K=c+(eor<<8)+(ul<<16);
- if (K==OldCharacter[y*80+x]) return;
- OldCharacter[y*80+x]=K;
- if (!videomode)
- {
-  if (bpp==8)
-  {
-   #undef PIXEL
-   #define PIXEL byte
-   PUTCHAR_M
-  }
-  else if (bpp==16)
-  {
-   #undef PIXEL
-   #define PIXEL word
-   PUTCHAR_M
-  }
-  else
-  {
-   #undef PIXEL
-   #define PIXEL unsigned
-   PUTCHAR_M
-  }
- }
- else
- {
-  if (bpp==8)
-  {
-   #undef PIXEL
-   #define PIXEL byte
-   PUTCHAR_HIRES_M
-  }
-  else if (bpp==16)
-  {
-   #undef PIXEL
-   #define PIXEL word
-   PUTCHAR_HIRES_M
-  }
-  else
-  {
-   #undef PIXEL
-   #define PIXEL unsigned
-   PUTCHAR_HIRES_M
-  }
- }
-}
-
-/****************************************************************************/
-/*** Put a character in the display buffer for P2000T emulation mode      ***/
-/****************************************************************************/
-#define PUTCHAR_T \
+#define PUTCHAR \
  PIXEL *p; \
  p=((PIXEL*)DisplayBuf)+y*width*10+x*12+(width-480)/2+(height-240)*width/2; \
  c*=40; \
@@ -816,7 +695,7 @@ static inline void PutChar_M (int x,int y,int c,int eor,int ul)
   } \
  }
 
-#define PUTCHAR_HIRES_T \
+#define PUTCHAR_HIRES \
  PIXEL *p; \
  p=((PIXEL*)DisplayBuf)+y*width*20+x*12+(width-480)/2+(height-480)*width/2; \
  c*=40; \
@@ -865,7 +744,7 @@ static inline void PutChar_M (int x,int y,int c,int eor,int ul)
   } \
  }
 
-static inline void PutChar_T (int x,int y,int c,int fg,int bg,int si)
+static inline void PutChar (int x,int y,int c,int fg,int bg,int si)
 {
  int K;
  int i;
@@ -878,19 +757,19 @@ static inline void PutChar_T (int x,int y,int c,int fg,int bg,int si)
   {
    #undef PIXEL
    #define PIXEL byte
-   PUTCHAR_T
+   PUTCHAR
   }
   else if (bpp==16)
   {
    #undef PIXEL
    #define PIXEL word
-   PUTCHAR_T
+   PUTCHAR
   }
   else
   {
    #undef PIXEL
    #define PIXEL unsigned
-   PUTCHAR_T
+   PUTCHAR
   }
  }
  else
@@ -899,19 +778,19 @@ static inline void PutChar_T (int x,int y,int c,int fg,int bg,int si)
   {
    #undef PIXEL
    #define PIXEL byte
-   PUTCHAR_HIRES_T
+   PUTCHAR_HIRES
   }
   else if (bpp==16)
   {
    #undef PIXEL
    #define PIXEL word
-   PUTCHAR_HIRES_T
+   PUTCHAR_HIRES
   }
   else
   {
    #undef PIXEL
    #define PIXEL unsigned
-   PUTCHAR_HIRES_T
+   PUTCHAR_HIRES
   }
  }
 }

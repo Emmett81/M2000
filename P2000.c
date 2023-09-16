@@ -26,7 +26,6 @@ char *PrnName    = NULL;
 FILE *PrnStream  = NULL;
 FILE *TapeStream = NULL;
 int TapeProtect  = 0;
-int P2000_Mode   = 0;
 int UPeriod      = 2;
 int IFreq        = 50;
 int Sync         = 1;
@@ -90,10 +89,6 @@ void Z80_Out (byte Port, byte Value)
   case 6:       /* Reserved for I/O cartridge */
    break;
   case 7:       /* DISAS (M-version only) */
-   /* If bit 1 is set, Video refresh is
-      disabled when CPU accesses video RAM */
-   if (P2000_Mode)
-    DISAReg=Value;
    return;
  }
  switch (Port)
@@ -153,7 +148,6 @@ byte Z80_In (byte Port)
    return inputstatus;
   }
   case 3:       /* Scroll Register (T-version only) */
-   if (!P2000_Mode)
     return ScrollReg;
   case 4:       /* Reserved for I/O cartridge */
    break;
@@ -162,8 +156,6 @@ byte Z80_In (byte Port)
   case 6:       /* Reserved for I/O cartridge */
    break;
   case 7:       /* DISAS (M-version only) */
-   if (P2000_Mode)
-    return DISAReg;
    break;
  }
  switch (Port)
@@ -262,11 +254,7 @@ int StartP2000 (void)
    ReadPage[I>>8]=ROM+I;
    WritePage[I>>8]=NoRAMWrite;
   }
-  if (P2000_Mode)
-   for (I=0x0000;I<0x1000;I+=256)
-    ReadPage[(I+0x5000)>>8]=WritePage[(I+0x5000)>>8]=VRAM+I;
-  else
-   for (I=0x0000;I<0x0800;I+=256)
+  for (I=0x0000;I<0x0800;I+=256)
     ReadPage[(I+0x5000)>>8]=WritePage[(I+0x5000)>>8]=VRAM+I;
   for (I=0x0000;I<((RAMSize<0xA000)? RAMSize:0xA000);I+=256)
   {

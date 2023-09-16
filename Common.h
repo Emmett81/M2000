@@ -14,9 +14,12 @@
 static int doblank=1;
 
 /****************************************************************************/
-/*** Refresh screen for T-model emulation                                 ***/
+/*** Refresh screen. This function updates the blanking state and then    ***/
+/*** calls either RefreshScreen_T() or RefreshScreen_M() and finally it   ***/
+/*** calls PutImage() to copy the off-screen buffer to the actual display ***/
 /****************************************************************************/
-void RefreshScreen_T (void)
+
+void RefreshScreen (void)
 {
   byte *S;
   int fg,bg,si,gr,bl,cg,hc,conceal;
@@ -26,6 +29,19 @@ void RefreshScreen_T (void)
   int eor;
   int found_si;
   int FG,BG;
+  static int BCount=0;
+ 
+   /* Update blanking count */
+   switch (++BCount)
+   {
+   case 35:
+      doblank=1;
+      break;
+   case 50:
+      doblank=0;
+      BCount=0;
+      break;
+ }
 
   S=VRAM+ScrollReg;
 
@@ -150,7 +166,7 @@ void RefreshScreen_T (void)
      FG=fg^7; BG=bg^7;
     }
     /* Put the character in the screen buffer */
-    PutChar_T (x,y,c-32,FG,BG,(si)? found_si:0);
+    PutChar (x,y,c-32,FG,BG,(si)? found_si:0);
    }
    /* Update the double height state
       If there was a double height code on this line, do not
@@ -167,65 +183,6 @@ void RefreshScreen_T (void)
    else
     S+=80;
   }
-}
 
-/****************************************************************************/
-/*** Refresh screen for M-model emulation                                 ***/
-/****************************************************************************/
-void RefreshScreen_M (void)
-{
- byte *S;
- int a,c;
- int x,y;
- int eor,ul;
- S=VRAM;
- for (y=0;y<24;++y,S+=80)
-  for (x=0;x<80;++x)
-  {
-   /* Get character */
-   c=S[x]&127;
-   /* If bit seven is set, underline is on */
-   ul=S[x]&128;
-   /* Get attributes */
-   a=S[x+2048];
-   /* bit 3 = inverse video */
-   eor=a&8;
-   /* Bit 0 = graphics */
-   if ((a&1) && (c&0x20))
-    c+=(c&0x40)? 64:96;
-   /* If invalid character or blanking is on,
-      display a space character */
-   if (c<32 || ((a&16) && doblank))
-    c=32;
-   /* Put the character in the screen buffer */
-   PutChar_M (x,y,c-32,eor,ul);
-  }
-}
-
-/****************************************************************************/
-/*** Refresh screen. This function updates the blanking state and then    ***/
-/*** calls either RefreshScreen_T() or RefreshScreen_M() and finally it   ***/
-/*** calls PutImage() to copy the off-screen buffer to the actual display ***/
-/****************************************************************************/
-void RefreshScreen (void)
-{
- static int BCount=0;
- /* Update blanking count */
- switch (++BCount)
- {
-  case 35:
-   doblank=1;
-   break;
-  case 50:
-   doblank=0;
-   BCount=0;
-   break;
- }
- /* Update the screen buffer */
- if (!P2000_Mode)
-  RefreshScreen_T ();
- else
-  RefreshScreen_M ();
- /* Put the image on the screen */
- PutImage ();
+  PutImage ();
 }
